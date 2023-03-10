@@ -1,0 +1,113 @@
+create database Spotify;
+use Spotify;
+create table User(userId int auto_increment ,
+userName varchar(50),
+userEmail varchar(50),
+primary key (userId));
+
+desc user;
+
+# DML Command - insert
+insert into user(userName,userEmail)
+values('zainyy', 'zan777@gmail.com'),
+('stanyy', 'sta@gmail.com'),
+('bob', 'bob4@gmail.com');
+
+# DQL Command - select
+select * from user;
+
+-- DDL Command - create
+create table playlist(playlistId int not null auto_increment primary key ,
+playlistName varchar(50) unique key,
+userId int,
+foreign key(userId) references user(userId));
+desc playlist;
+
+insert into playlist(playlistName,userId)
+values('zains playlist', 1),
+('stany playlist', 2), ('abc playlist', 1),
+('bob playlist', 3), ('B playlist', 2);
+
+select * from playlist;
+
+
+create table Tracks(trackId int not null auto_increment primary key,
+trackName varchar(50),
+artistName varchar(25),
+playlistId int,
+foreign key(playlistId) references playlist(playlistId));
+desc tracks;
+
+-- DML Command - insert
+insert into tracks(trackName, artistName, playlistId)
+values('atif aslam mashup', 'atif aslam', 1),
+('some dreams','dcoz',  2), ('The story','hemi surliz', 3),
+ ('boss', 'kavii', 2), ('The Kids', 'suzain', 3),
+ ('some dreams', 'starlett', 1), ('The story', 'jeff', 3);
+
+select * from tracks;
+
+select tracks.trackName, artistName from tracks join playlist on tracks.playlistId=playlist.playlistId
+where playlist.userId = 1;
+
+-- Join Query:
+-- Inner join
+select playlist.userId, playlist.playlistId, user.userName, user.userEmail, playlist.playlistName,  
+tracks.trackId, tracks.trackName from user inner join playlist on user.userId = playlist.userId
+inner join tracks on playlist.playlistId = tracks.playlistId;
+
+select * from tracks;
+
+-- DDL Command - alter
+alter table user rename to userrs;
+select * from userrs;
+
+alter table userrs rename to user;
+select * from user;
+
+-- Aggregate Functions
+select count(trackName) from tracks;
+select min(trackName) from tracks;
+
+select max(trackName) from tracks;
+
+select sum(trackId) from tracks;
+
+select avg(trackId) from tracks;
+insert into tracks(trackName, artistName, playlistId)   -- same track added to perform distinct query 
+values('atif aslam mashup', 'atif aslam', 1), ('boss', 'kavii', 2);
+select * from tracks;
+select distinct trackName from tracks;
+
+-- Wild Card Operators
+select * from tracks where artistName like 's%';           -- start with s
+
+select * from tracks where artistName like '%i';           -- end with i
+
+select * from tracks where artistName like '%h%';          -- having h in any position 
+
+select * from tracks where artistName like '_e%';                 -- e at 2nd position  
+
+select * from tracks where artistName like '____';               -- it will give 4char names
+ 
+select * from tracks where artistName like 'a%m';                -- start with a and end with m
+
+-- Group by clause 
+select count(userId), userEmail
+FROM user
+GROUP BY userEmail;
+
+-- Having clause
+select count(playlistId), trackName
+from tracks group by trackName
+having count(playlistId) < 4;
+
+-- subqueris 
+
+select trackName from tracks 
+where trackName = (select max(trackName) from tracks);
+
+select trackName, trackId from tracks 
+where trackName < (select max(trackName) from tracks);
+
+
